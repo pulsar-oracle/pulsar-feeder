@@ -1,4 +1,5 @@
 import type { FeedAdapter } from "./index";
+import { fetchJson } from "./http";
 
 const BINANCE_SYMBOLS: Record<string, string> = {
   XLM_USD: "XLMUSDT",
@@ -18,10 +19,7 @@ export class BinanceAdapter implements FeedAdapter {
     if (!symbol) throw new Error(`No Binance symbol mapping for feed: ${this.feedId}`);
 
     const url = `https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Binance request failed: ${res.status}`);
-
-    const data = (await res.json()) as { price: string };
+    const data = await fetchJson<{ price: string }>(url, "Binance");
     const price = parseFloat(data.price);
     if (isNaN(price)) throw new Error(`Invalid price from Binance for ${symbol}`);
 

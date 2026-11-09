@@ -1,4 +1,5 @@
 import type { FeedAdapter } from "./index";
+import { fetchJson } from "./http";
 
 const COINGECKO_IDS: Record<string, string> = {
   XLM_USD: "stellar",
@@ -18,10 +19,7 @@ export class CoinGeckoAdapter implements FeedAdapter {
     if (!coinId) throw new Error(`No CoinGecko mapping for feed: ${this.feedId}`);
 
     const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=usd`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`CoinGecko request failed: ${res.status}`);
-
-    const data = (await res.json()) as Record<string, { usd: number }>;
+    const data = await fetchJson<Record<string, { usd: number }>>(url, "CoinGecko");
     const price = data[coinId]?.usd;
     if (price == null) throw new Error(`No price returned for ${coinId}`);
 
