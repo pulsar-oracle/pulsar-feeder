@@ -1,7 +1,4 @@
-target/
 node_modules/
+dist/
 .env
 .env.local
-dist/
-*.wasm
-contracts/test_snapshots/
